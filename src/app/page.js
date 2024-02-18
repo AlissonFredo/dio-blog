@@ -1,17 +1,20 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import styles from "./page.module.css";
+import { Button, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { useRouter } from 'next/navigation'
+import { APIKEY, AUTHORIZATION, BASEURL } from "@/services/variables";
 
 export default function Home() {
+  const router = useRouter()
 
   const [posts, setPosts] = useState([])
 
   async function getData() {
-    const res = await fetch('https://qylcxevvcwtxviltnbtv.supabase.co/rest/v1/posts?select=*', {
+    const res = await fetch(`${BASEURL}/posts?select=*`, {
       headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5bGN4ZXZ2Y3d0eHZpbHRuYnR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDgxMjk4MDAsImV4cCI6MjAyMzcwNTgwMH0.7p7HktT4w6NRK0TOM9nBZNuUCIFkv8_2QsN5l11sIoQ',
-        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5bGN4ZXZ2Y3d0eHZpbHRuYnR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDgxMjk4MDAsImV4cCI6MjAyMzcwNTgwMH0.7p7HktT4w6NRK0TOM9nBZNuUCIFkv8_2QsN5l11sIoQ"
+        'Authorization': AUTHORIZATION,
+        "apikey": APIKEY
       }
     })
 
@@ -22,9 +25,7 @@ export default function Home() {
 
     const result = await res.json()
 
-
     setPosts(result)
-
   }
 
   useEffect(() => {
@@ -33,13 +34,34 @@ export default function Home() {
 
 
   return (
-    <main className={styles.main}>
-      <h1>Hello Word 1!</h1>
-      {posts.map(value =>
-      (
-        <h4>{value.title}</h4>
-      )
-      )}
+    <main>
+      <Container>
+        <Row>
+          <Col md={12}>
+            <h1 className="d-flex justify-content-center mt-5">DIO - Blog</h1>
+          </Col>
+        </Row>
+        <Row className="d-flex justify-content-center mt-5">
+          <Col md={8}>
+            <ListGroup as="ul" variant="flush">
+              {posts.map((value, key) => (
+                <ListGroup.Item as="li" className="mb-3 bg-body-secondary p-5" key={key}>
+                  <h3>{value.title}</h3>
+                  <p>{value.description}</p>
+                  <div className="d-flex justify-content-end">
+                    <Button
+                      variant="primary"
+                      onClick={() => router.push(`/post/${value.id}`, { scroll: false })}
+                    >
+                      Ver mais
+                    </Button>
+                  </div>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </Col>
+        </Row>
+      </Container>
     </main>
   );
 }
