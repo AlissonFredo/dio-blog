@@ -10,14 +10,13 @@ export default function Home() {
 
   const [posts, setPosts] = useState([])
 
-  async function getData() {
+  const getData = async () => {
     const res = await fetch(`${BASEURL}/posts?select=*`, {
       headers: {
         'Authorization': AUTHORIZATION,
         "apikey": APIKEY
       }
     })
-
 
     if (!res.ok) {
       throw new Error('Failed to fetch data')
@@ -31,7 +30,6 @@ export default function Home() {
   useEffect(() => {
     getData()
   }, [])
-
 
   return (
     <main>
